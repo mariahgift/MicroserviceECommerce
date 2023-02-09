@@ -37,6 +37,24 @@ public class CartService {
     }
 
 
+    public String removeToCart(int userId, int productId) {
+        if (getUserId(userId) != 0 && getProductId(productId) != 0 && getUserRole(userId).equals("buyer")) {
+            Cart removeCart = new Cart();
+            removeCart.setUserId(userId);
+            removeCart.setProductId(productId);
+            cartRepository.delete(removeCart);
+            return "Product remove from the cart.";
+        }  else if (getUserId(userId) == 0) {
+            return "User not found";
+        } else if (getProductId(productId) == 0) {
+            return "Product not found";
+        } else if (getUserRole(userId).equals("seller")) {
+            return "Seller can't add product to the cart";
+        } else {
+            return "Error occurred";
+        }
+    }
+
     public String getUserRole(int userId) {
         User getFromUserAPI = restTemplate.getForObject("http://localhost:8080/api/getUserById/"+userId, User.class);
         return getFromUserAPI.getRole();

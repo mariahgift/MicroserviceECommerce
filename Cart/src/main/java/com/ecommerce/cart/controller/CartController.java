@@ -21,5 +21,8 @@ public class CartController {
         return cartService.addToCart(userId, productId);
     }
 
-
+    @DeleteMapping(path = "/removeToCart/{userId}/{productId}")
+    public String removeToCart(@PathVariable int userId, @PathVariable int productId) {
+        return cartService.removeToCart(userId, productId);
+    }
 }
