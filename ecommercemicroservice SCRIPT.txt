@@ -24,7 +24,6 @@ CREATE TABLE products (
 
 CREATE TABLE carts (
 	cart_id SERIAL PRIMARY KEY NOT NULL,
-	product_id int, 
-	quantity double precision,
+	product_id int,
 	user_id int
 );
