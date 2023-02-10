@@ -19,20 +19,23 @@ public class ProductService {
     @Autowired
     RestTemplate restTemplate;
 
-    public List<Object> getUsers() {
-        String url = "http://localhost:8080/api/getAllUsers";
-        Object[] users = restTemplate.getForObject(url, Object[].class);
-        return Arrays.asList(users);
-    }
 
     public String getUserRole(int userId) {
         User getFromExternalAPI = restTemplate.getForObject("http://localhost:8080/api/getUserById/" + userId, User.class);
-        return getFromExternalAPI.getRole();
+        if (getFromExternalAPI == null) {
+            return null;
+        } else {
+            return getFromExternalAPI.getRole();
+        }
     }
 
-    public int getUserId(int userId) {
+    public String getUserId(int userId) {
         User getFromExternalAPI = restTemplate.getForObject("http://localhost:8080/api/getUserById/" + userId, User.class);
-        return getFromExternalAPI.getUserId();
+        if (getFromExternalAPI == null) {
+            return null;
+        } else {
+            return String.valueOf(getFromExternalAPI.getUserId());
+        }
     }
 
     public List<Product> findAllProducts() {
@@ -43,36 +46,6 @@ public class ProductService {
         return productRepository.findById(productId).orElseThrow(() -> new BadRequestException("Product not found"));
     }
 
-    public String addProduct(Product product) {
-        if (getUserRole(product.getUserId()).equals("seller")) {
-            productRepository.save(product);
-            return "Product successfully added";
-        } else {
-            return "You don't have access to add product.";
-        }
-    }
-
-    public String updateProductById(int productId, int userId, Product product) {
-        if (isProductExist(productId) && getUserRole(userId).equals("seller") && product.getUserId() == userId) {
-            Product updateProduct = productRepository.findById(productId).orElseThrow();
-            updateProduct.setProductName(product.getProductName());
-            updateProduct.setProductDescription(product.getProductDescription());
-            updateProduct.setProductPrice(product.getProductPrice());
-            updateProduct.setProductQuantity(product.getProductQuantity());
-            updateProduct.setUserId(product.getUserId());
-            productRepository.save(updateProduct);
-            return "Product updated successfully";
-        }
-        if (product.getUserId() != userId) {
-            return "You cannot update this product because it does not belong to yours.";
-        }
-        //check
-        if (getUserRole(userId).equals("buyer")) {
-            return "You don't have access to this page. Only seller can add product.";
-        }
-        return "Product not found";
-    }
-
     public boolean isProductExist(int productId) {
         if (findProductById(productId) != null) {
             return true;
@@ -81,17 +54,66 @@ public class ProductService {
         }
     }
 
-    public String deleteProduct(int productId, int userId, Product product) {
-        if (isProductExist(productId) && getUserRole(userId).equals("seller") && product.getUserId() == userId) {
-            productRepository.deleteById(productId);
-            return "Product deleted";
+    public boolean isUserExist(int userId) {
+        if (getUserId(userId) == null) {
+            return false;
+        } else {
+            return true;
         }
-        if (product.getUserId() != userId) {
-            return "You cannot delete this product because it does not belong to yours.";
+    }
+
+    public String addProduct(Product product) {
+        if (getUserRole(product.getUserId()).equals("seller")) {
+            productRepository.save(product);
+            return "Product successfully added";
+        } else if (isUserExist(product.getUserId()) && getUserRole(product.getUserId()).equals("buyer")) {
+            return "You don't have access to add product.";
         }
-        if (getUserRole(userId).equals("buyer")) {
-            return "You don't have access to this page. Only seller can delete product.";
+        else {
+            return "User does not exist";
         }
-        return null;
+    }
+
+    public String updateProductById(int productId, int userId, Product product) {
+        if (isProductExist(product.getProductId())) {
+            if (getUserRole(userId).equals("seller") && product.getUserId() == userId) {
+                Product updateProduct = productRepository.findById(productId).orElseThrow();
+                updateProduct.setProductName(product.getProductName());
+                updateProduct.setProductDescription(product.getProductDescription());
+                updateProduct.setProductPrice(product.getProductPrice());
+                updateProduct.setProductQuantity(product.getProductQuantity());
+                updateProduct.setUserId(product.getUserId());
+                productRepository.save(updateProduct);
+                return "Product updated successfully";
+            } else if (getUserId(userId) == null) {
+                return "User does not exist";
+            } else if (getUserRole(userId).equals("buyer")) {
+                return "You don't have access to this page. Only seller can add product.";
+            } else if (product.getUserId() != userId) {
+                return "You cannot update this product because it does not belong to yours.";
+            }
+        } else {
+            return "Product does not exist";
+        }
+        return "Error occurred";
+    }
+
+
+    public String deleteProduct(int productId, int userId) {
+        Product findProduct = findProductById(productId);
+
+        if (isProductExist(productId)) {
+            if (getUserRole(userId).equals("buyer") && findProduct.getUserId() == userId) {
+                productRepository.delete(findProductById(productId));
+                return "Product deleted";
+            } else if (findProduct.getUserId() != userId) {
+                return "You cannot delete this product because it does not belong to yours.";
+            } else if (getUserRole(userId).equals("seller")) {
+                return "You don't have access to this page. Only seller can delete product.";
+            }
+        } else {
+            return "Product does not exist";
+        }
+        return "Error occurred";
     }
 }

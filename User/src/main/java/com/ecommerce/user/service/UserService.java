@@ -1,13 +1,12 @@
 package com.ecommerce.user.service;
 
 import com.ecommerce.user.entity.User;
+import com.ecommerce.user.exception.BadRequestException;
 import com.ecommerce.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-
 @Service
 public class UserService {
     @Autowired
@@ -17,15 +16,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(int userId) {
-        return userRepository.findById(userId);
+    public User findUserById(int userId) throws BadRequestException {
+        return userRepository.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
     }
 
     public User addUser(User user) {
         return userRepository.save(user);
     }
 
-    public User updateById(int userId, User user) {
+    public User updateUserById(int userId, User user) {
         User updateUser = userRepository.findById(userId).orElseThrow();
         updateUser.setUserName(user.getUserName());
         updateUser.setEmail(user.getEmail());
@@ -35,7 +34,7 @@ public class UserService {
     }
 
 
-    public void deleteById(int userId) {
+    public void deleteUserById(int userId) {
         userRepository.deleteById(userId);
     }
 }

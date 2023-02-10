@@ -1,39 +1,28 @@
 # MicroserviceECommerce
 E29 Design your own microservice
 
-
-Using your previous e-commerce project, break down implemented functionalities and create microservices for them. Design them according to the microservice principles: single - responsibility, built around business capabilities and design for failure.
-
-No need for new implementations but consider that your project is for a large scale usage.
-
-20 Points
-Coding Repository Based
-Add a readme.md file in your codes which contain a description about your design and answers the following questions:
-
 What are the functionalities involved, and the microservices you've created
-Why do you think that the functionality needs to be isolated from another service.
-Please commit your codes to your repositories.
-
 
 This project has 3 microservices including User, Product, and Cart.
 
 User functionalities
-- Add user
-- View user information
-- Update user information
-- Delete user
-- View/Get user by id
+- getAllUsers - show all the users, sellers or buyers.
+- getUserById - view the information of specific user.
+- addUser - it allows the user to create an account.
+- updateUser - it allows the user to change his/her account details.
+- deleteUser - delete the existing user.
 
 Product functionalities
-- Add product
-- View product information
-- Update product information
-- Delete product
-- View/Get product by id
+- getAllProducts - view all the products added by the seller.
+- getProductById - view the product details of a specified product.
+- addProduct - it allows only the user that has a role of "seller" to add product.
+- updateProduct - update the product details, sellers cannot update the product they don't own.
+- deleteProduct - delete product details, sellers cannot update the product they don't own.
 
 Cart functionalities
-- Add product to cart
-- Remove product to cart
-- View all products in the cart
+- addToCart - allows only buyer to add product in the cart.
+- removeCart - allows only buyer to remove product in the cart.
+- productsInCart - allows the buyer to view the products in his/her cart.
 
-
+Why do you think that the functionality needs to be isolated from another service?
+Answer: The functionalities need to be separated to have an organized service. Through this, the developers will enable to update the system easily and helps them to fix errors without affecting other services. 

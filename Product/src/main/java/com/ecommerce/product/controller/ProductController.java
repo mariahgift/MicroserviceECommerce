@@ -5,7 +5,6 @@ import com.ecommerce.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -24,15 +23,6 @@ public class ProductController {
         return productService.findProductById(productId);
     }
 
-    @GetMapping(path = "/getUsers")
-    public List<Object> getAllUsers() {
-        return Arrays.asList(productService.getUsers());
-    }
-
-    @GetMapping(path = "/getUserRole/{userId}")
-    public String getUserRole(@PathVariable int userId) {
-        return productService.getUserRole(userId);
-    }
 
     @PostMapping(path = "/addProduct")
     public String addUser(@RequestBody Product product) {
@@ -46,7 +36,7 @@ public class ProductController {
     }
 
     @DeleteMapping(path = "/deleteProduct/{productId}/{userId}")
-    public String deleteProduct(@PathVariable int productId, @PathVariable int userId, Product product) {
-        return productService.deleteProduct(productId, userId, product);
+    public String deleteProduct(@PathVariable int productId, @PathVariable int userId) {
+        return productService.deleteProduct(productId, userId);
     }
 }
