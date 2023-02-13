@@ -86,9 +86,10 @@ public class CartService {
             for(int i = 0; i < getProductInfo().size(); i++){
                 for(int j = 0; j < cartRepository.findByUserIdAndProductId(userId,getProductInfo().get(i).getProductId()).size(); j++){
                     if(checkItem(userId,getProductInfo().get(i).getProductId())){
-                        viewItems.append(getProductInfo().get(i).getProductName()).append(" ");
-                        viewItems.append(getProductInfo().get(i).getProductDescription()).append(" ");
-                        viewItems.append(getProductInfo().get(i).getProductPrice()).append("\n");}
+                        viewItems.append(getProductInfo().get(i).getProductName()).append("\n");
+                        viewItems.append(getProductInfo().get(i).getProductDescription()).append("\n");
+                        viewItems.append(getProductInfo().get(i).getProductPrice()).append("\n\n");
+                    }
                 }
             }
             return viewItems.toString();

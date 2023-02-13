@@ -103,12 +103,12 @@ public class ProductService {
         Product findProduct = findProductById(productId);
 
         if (isProductExist(productId)) {
-            if (getUserRole(userId).equals("buyer") && findProduct.getUserId() == userId) {
+            if (getUserRole(userId).equals("seller") && findProduct.getUserId() == userId) {
                 productRepository.delete(findProductById(productId));
                 return "Product deleted";
             } else if (findProduct.getUserId() != userId) {
                 return "You cannot delete this product because it does not belong to yours.";
-            } else if (getUserRole(userId).equals("seller")) {
+            } else if (getUserRole(userId).equals("buyer")) {
                 return "You don't have access to this page. Only seller can delete product.";
             }
         } else {
